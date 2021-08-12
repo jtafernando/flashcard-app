@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Stats - TangoCards{% endblock %}
+
+{% block content %}
+<br />
+<h1 align="left">Statistics</h1>
+<br>
+<form method="POST">
+    <div class="form-group" style="margin-right: 50%;">
+        <label for="newCardsPerDay">Maximum new cards per day:</label>
+        <input type="number" value="1" min="1" id="newCardsPerDay">
+    </div>
+    <br>
+    <div class="form-group" style="margin-right: 50%;">
+        <label for="reviewCardsPerDay">Maximum review cards per day:</label>
+        <input type="number" value="1" min="1" id="reviewCardsPerDay">
+    </div>
+    <br>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="inOrderBubble" id="inOrderBubble" value="option1" checked>
+        <label class="form-check-label" for="inOrderBubble">Display new cards in the order they were added.</label>
+    </div>
+    <br>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="randomOrderBubble" id="randomOrderBubble" value="option2">
+        <label class="form-check-label" for="randomOrderBubble">Display new cards in random order.</label>
+    </div>
+</form>
+
+{% endblock %}

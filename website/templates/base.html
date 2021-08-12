@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--2 links below are CDNs (content delivery network) for css bootstrap templates-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        crossorigin="anonymous" />
+    <!--block is an html elment that can be overwritten by another child html template-->
+    <title>{% block title %}Home{% endblock %}</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #202a3f;">
+        <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark"> -->
+        <div class="container">
+            <a class="navbar-brand mb-0 h1" href="/">TangoCards</a>
+            <button type="button" class="navbar-toggler navbar-toggler-right collapsed" type="button"
+                data-toggle="collapse" data_target="#navbar" aria-controls="navbar" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse " id="navbar" name="navbar" aria-expanded="false">
+                {% if user.is_authenticated %}
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-item nav-link" id="decks" href="/">Decks</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-item nav-link" id="addCards" href="/add-cards">Add Cards</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-item nav-link" id="cardLibrary" href="/card-library">Library</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-item nav-link" id="stats" href="/stats">Stats</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link">Signed in as: {{current_user.first_name}}</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link nav-link" id="logout" href="/logout">Log out</a>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav ms-auto" style="margin-left: auto;">
+                    <li class="nav-item active">
+                        <a class="nav-link nav-link" id="signUp" href="/sign-up">Sign Up</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link nav-link" id="login" href="/login">Log in</a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!--Display flashed messages to user-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <!--if there are any messages-->
+    {% for category, message in messages %}
+    {% if category == 'warning' %}
+    <div class="alert alert-danger alter-dismmisable fade show" role="alert" style="width:600px; margin:0 auto;">
+        {{message}}
+        <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% else %}
+    <div class="alert alert-success alter-dismmisable fade show" role="alert" style="width:600px; margin:0 auto;">
+        {{message}}
+        <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!--put some padding b/t navbar and main screen content-->
+    <div class="container">
+        {% block content %} {% endblock %}
+    </div>
+
+    <!--these are javascript scripts from bootstrap-->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <script>
+        $('#deckSettingsModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var deckName = button.data('deck-name')
+            var newPerDay = button.data('new-per-day')
+            var revPerDay = button.data('rev-per-day')
+            var newOrder = button.data('order')
+            var modal = $(this)
+            modal.find('.modal-title').text('Deck settings for: ' + deckName)
+            modal.find('#newCardsPerDay').val(newPerDay)
+            modal.find('#reviewCardsPerDay').val(revPerDay)
+            modal.find('#deck').val(deckName)
+            if (newOrder == "True") {
+                modal.find('#randomOrder').click()
+            } else {
+                modal.find('#inOrder').click()
+            }
+        })
+    </script>
+
+    <script>
+        $('#deleteDeckModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var deckName = button.data('deck-name')
+            var modal = $(this)
+            modal.find('.modal-title').text('Delete: ' + deckName)
+            modal.find('#deckToDelete').val(deckName)
+        })
+    </script>
+    <!-- <script> src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"</script> -->
+    <script>
+        function studySession(deckId){
+            //console.log("ran");
+            fetch("/study-session", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({deckId: deckId})
+            }).then((response) => {
+                console.log("data: " + JSON.stringify(response));
+            });
+            // .then(function (response) {
+            //     response.render('study_session');
+            // }).catch(function (err) {
+            //     console.log(err);
+            // });
+
+            // fetch() not move  only request? prob
+        }
+    </script>
+
+
+
+<!-- <script>
+    //type = "text/javascript"
+    //src = "{{ url_for('static', filename='index.js') }}"
+</script> -->
+
+</body>
+
+</html>
